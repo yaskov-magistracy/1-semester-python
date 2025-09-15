@@ -7,7 +7,7 @@ from alembic import context
 
 from config import settings
 from DAL.Database import Base
-from DAL.Accounts import AccountModel
+from DAL.Models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

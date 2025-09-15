@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .Database import BaseModel
+from .Models import BaseModel
 from sqlalchemy import and_, not_, select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Any, Generic, TypeVar

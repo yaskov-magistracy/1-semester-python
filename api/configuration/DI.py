@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator, Annotated
 from fastapi import Depends
 from DAL.Database import async_session_factory
-from DAL.Accounts.AccountsRepository import AccountsRepository
+from DAL.AccountsRepository import AccountsRepository
 from core.Accounts.AccountsService import AccountsService
 
 async def getDbSession() -> AsyncGenerator[AsyncSession, None]:

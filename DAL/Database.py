@@ -1,7 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession, AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
-from uuid import uuid4
 from config import settings
 
 databaseUrl = settings.DATABASE_CONNECTION_STRING()
@@ -21,7 +20,3 @@ async_session_factory = async_sessionmaker(
 
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
-
-class BaseModel(Base):
-    __abstract__ = True
-    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, unique=True, default=uuid4)

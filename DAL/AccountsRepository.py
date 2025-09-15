@@ -1,4 +1,4 @@
-from .AccountModel import AccountModel
+from .Models import AccountModel
 from DAL.BaseRepository import BaseRepository
 
 class AccountsRepository(BaseRepository[AccountModel]):

@@ -1,6 +1,6 @@
 from .DTO import RegisterRequest, LoginRequest, LoginResponse
-from DAL.Accounts.AccountsRepository import AccountsRepository
-from DAL.Accounts.AccountModel import AccountModel
+from DAL.AccountsRepository import AccountsRepository
+from DAL.Models import AccountModel
 
 class AccountsService():
     accountsRepo: AccountsRepository
