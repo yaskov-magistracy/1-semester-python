@@ -1,7 +1,7 @@
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String
-from ..BaseModel import BaseModel
+from ..Database import BaseModel
 from .AccountRoleModel import AccountRoleModel
 
 class AccountModel(BaseModel):
