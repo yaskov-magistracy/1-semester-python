@@ -8,5 +8,5 @@ class AccountsService():
     def __init__(self, accountsRepo: AccountsRepository):
         self.accountsRepo = accountsRepo
 
-    async def Register(self, request: RegisterRequest) -> LoginResponse:
-        self.accountsRepo.Create(AccountModel())
+    async def Register(self, request: RegisterRequest):
+        pass

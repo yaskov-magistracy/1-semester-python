@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .BaseModel import BaseModel
+from .Database import BaseModel
 from sqlalchemy import and_, not_, select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Any, Generic, TypeVar
@@ -11,7 +11,12 @@ class BaseRepository(ABC, Generic[T]):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def Create(self, data: T) -> T:
+    @property
+    @abstractmethod
+    def model(self) -> type[T]:
+        raise NotImplementedError
+
+    async def create(self, data: dict) -> T:
         instance = self.model(**data)
         self.session.add(instance)
         await self.session.flush()

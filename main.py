@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Response, status
-from api.endpoints.routes import apiRouters
+from api.endpoints.Routes import apiRouters
 import uvicorn
 from pydantic import BaseModel
 

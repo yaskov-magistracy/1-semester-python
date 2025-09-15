@@ -1,5 +1,7 @@
-from ..BaseRepository import BaseRepository
 from .AccountModel import AccountModel
+from DAL.BaseRepository import BaseRepository
 
 class AccountsRepository(BaseRepository[AccountModel]):
-    pass
+    @property
+    def model(self) -> type[AccountModel]:
+        return AccountModel

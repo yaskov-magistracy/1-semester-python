@@ -11,10 +11,9 @@ accountsApiRouter = APIRouter(
 )
 
 
-@accountsApiRouter.post("/register", response_model=LoginResponse)
+@accountsApiRouter.post("/register")
 async def Register(
-    accountsService: AccountsServiceDep,
-    registerRequest: Annotated[RegisterRequest, Body()]
-    ) -> LoginResponse:
-    response = await accountsService.Register(registerRequest)
-    return response
+    accountsService: AccountsServiceDep
+    ):
+    
+    pass
