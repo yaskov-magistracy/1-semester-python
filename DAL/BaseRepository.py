@@ -16,83 +16,57 @@ class BaseRepository(ABC, Generic[T]):
     def model(self) -> type[T]:
         raise NotImplementedError
 
-    async def create(self, data: dict) -> T:
-        instance = self.model(**data)
+    async def Add(self, data: T) -> T:
+        instance = data#self.model(data)
         self.session.add(instance)
         await self.session.flush()
+        await self.session.commit()
         await self.session.refresh(instance)
         return instance
-    
 
-    async def get_by_id(self, id: UUID) -> T | None:
+    async def GetById(self, id: UUID) -> T | None:
         result = await self.session.execute(
             select(self.model)
-            .where(
-                and_(self.model.id == id,
-                not_(self.model.disabled))))
-        return result.scalar_one_or_none()
+            .where(self.model.id == id))
+        
+        return result.scalars().one_or_none()
 
-    
-    async def get_many_by_filters(self, skip: int = 0, limit: int = 100, **filters) -> list[T]:
+    async def SearchAll(self, skip: int = 0, limit: int = 100, **filters) -> list[T]:
         result = await self.session.execute(
             select(self.model)
-            .where(not_(self.model.disabled))
             .filter_by(**filters)
             .offset(skip)
             .limit(limit))
         
         return result.scalars().all()
 
+    async def SearchOne(self, **filters) -> T | None:
+        result = await self.session.execute(
+            select(self.model)
+            .filter_by(**filters))
 
-    async def get_one_by_filters(self, include_disabled: bool = False, **filters) -> T | None:
-        query = select(self.model).filter_by(**filters)
-        if not include_disabled:
-            query = query.where(not_(self.model.disabled))
+        return result.scalars().one_or_none()
 
-        result = await self.session.execute(query)
-
-        return result.scalar_one_or_none()
-    
-
-    async def update_one_by_id(self, id: UUID, data: dict) -> T | None:
+    async def Update(self, id: UUID, data: dict) -> T | None:
         await self.session.execute(
             update(self.model)
-            .where(
-                and_(self.model.id == id,
-                not_(self.model.disabled)))
+            .where(self.model.id == id)
             .values(**data))
+        updated = await self.getById(id)
+        if (updated == None):
+            raise Exception("Where is no entity with same Id")
         
-        return await self.get_by_id(id)
-    
+        return updated
 
-    async def update_attr(self, id: UUID, column: str, value: Any) -> T:
+    async def UpdateField(self, id: UUID, column: str, value: Any) -> T:
         await self.session.execute(
             update(self.model)
-            .where(
-                and_(self.model.id == id,
-                not_(self.model.disabled)))
+            .where(self.model.id == id)
             .values(**{column: value})
         )
 
         return await self.get_by_id(id)
 
-
-    async def update_disabled_attr(self, value: bool, **filters) -> None:
-        await self.session.execute(
-            update(self.model)
-            .filter_by(**filters)
-            .values(disabled = value)
-        )
-
-    
-    async def soft_delete(self, **filters) -> None:
-        await self.update_disabled_attr(value=True, **filters)
-
-    
-    async def restore(self, **filters) -> None:
-        await self.update_disabled_attr(value=False, **filters)
-
-
-    async def hard_delete_one_by_id(self, id: UUID) -> None:
+    async def Delete(self, id: UUID) -> None:
         await self.session.execute(
             delete(self.model).where(self.model.id == id))

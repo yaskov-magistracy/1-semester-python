@@ -1,6 +1,6 @@
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, DateTime
+from sqlalchemy import String, DateTime, ForeignKey
 from uuid import uuid4
 from enum import Enum
 from datetime import datetime, timezone
@@ -20,8 +20,8 @@ class AccountModel(BaseModel):
     login: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     passwordHash: Mapped[str] = mapped_column(String(255), nullable=False)
-    role: Mapped[AccountRoleModel] = mapped_column(default=AccountRoleModel.User)
-    blockReason: Mapped[str] = mapped_column(String(1000))
+    role: Mapped[AccountRoleModel] = mapped_column(default=AccountRoleModel.User, nullable=False)
+    blockReason: Mapped[str] = mapped_column(String(1000), nullable=True)
 
     notifications: Mapped[list["NotificationModel"]] = relationship(
         "NotificationModel",
@@ -35,6 +35,7 @@ class NotificationModel(BaseModel):
     __tablename__ = "notifications"
     time: Mapped[datetime] = mapped_column(DateTime(timezone=False))
     text: Mapped[str] = mapped_column(String(1000), nullable=False)
+    accountId: Mapped[UUID] = mapped_column(ForeignKey("accounts.id"))
 
     account: Mapped["AccountModel"] = relationship(
         "AccountModel",
