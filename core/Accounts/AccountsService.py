@@ -1,6 +1,10 @@
-from .DTO import RegisterRequest, LoginRequest, LoginResponse
+from .DTO.RegisterRequest import *
+from .DTO.LoginRequest import *
+from .DTO.LoginResponse import *
 from DAL.AccountsRepository import AccountsRepository
 from DAL.Models import AccountModel
+from uuid import uuid4
+from fastapi import HTTPException
 
 class AccountsService():
     accountsRepo: AccountsRepository
@@ -8,5 +12,32 @@ class AccountsService():
     def __init__(self, accountsRepo: AccountsRepository):
         self.accountsRepo = accountsRepo
 
-    async def Register(self, request: RegisterRequest):
-        pass
+    async def Register(self, request: RegisterRequest) -> LoginResponse:
+        existed = await self.accountsRepo.SearchOne(login = request.login) 
+        if (existed != None):
+            raise HTTPException(400, "Login is occuped")
+        existed = await self.accountsRepo.SearchOne(email = request.email) 
+        if (existed != None):
+            raise HTTPException(400, "Email is occuped")
+
+        created = await self.accountsRepo.Add(AccountModel(
+            login=request.login,
+            email=request.email, 
+            passwordHash=await self.CalculatePasswordHash(request.password),
+            role=request.role))
+        return LoginResponse(id=created.id, role=created.role)
+    
+    async def Login(self, request: LoginRequest) -> LoginResponse:
+        existed = await self.accountsRepo.SearchOne(login=request.login)
+        if (existed == None):
+            raise HTTPException(400, "Login or password is incorrect")
+        isPasswordCorrect = (await self.CalculatePasswordHash(request.password)) == existed.passwordHash
+        if (isPasswordCorrect == False):
+            raise HTTPException(400, "Login or password is incorrect")
+        if (existed.blockReason != None):
+            raise HTTPException(400, f"Account is blocked. reason: {existed.blockReason}")
+        
+        return LoginResponse(id=existed.id, role=existed.role)
+    
+    async def CalculatePasswordHash(self, password: str) -> str:
+        return password # Типо хеширую пароль
