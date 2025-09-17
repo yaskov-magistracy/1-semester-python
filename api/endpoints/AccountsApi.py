@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, Request
+from fastapi import APIRouter, Depends, HTTPException, Response, Request, Body
 from api.configuration.DI import AccountsServiceDep
+from core.Accounts.AccountRole import AccountRole
+from core.Accounts.DTO.BlockRequest import BlockRequest
 from core.Accounts.DTO.RegisterRequest import RegisterRequest
 from core.Accounts.DTO.LoginRequest import LoginRequest
 from core.Accounts.DTO.LoginResponse import LoginResponse
@@ -43,3 +45,14 @@ async def Logout(request: Request) -> None:
     request.cookies.pop(AUTH_TOKEN_KEY, "")    
     return Response(status_code=204)
 
+@accountsApiRouter.post("/block")
+async def Block(
+    accountsService: AccountsServiceDep,
+    authInfo: AuthInfo,
+    blockRequest: BlockRequest
+    ):
+    if authInfo.role != AccountRole.Admin:
+        raise HTTPException(401)
+    
+    await accountsService.Block(authInfo.id, blockRequest)
+    return Response(status_code=204)

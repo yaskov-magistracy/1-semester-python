@@ -1,3 +1,4 @@
+from core.Accounts.DTO.BlockRequest import BlockRequest
 from .DTO.RegisterRequest import *
 from .DTO.LoginRequest import *
 from .DTO.LoginResponse import *
@@ -5,6 +6,7 @@ from DAL.AccountsRepository import AccountsRepository
 from DAL.Models import AccountModel
 from uuid import uuid4
 from fastapi import HTTPException
+import uuid
 
 class AccountsService():
     accountsRepo: AccountsRepository
@@ -37,7 +39,23 @@ class AccountsService():
         if (existed.blockReason != None):
             raise HTTPException(400, f"Account is blocked. reason: {existed.blockReason}")
         
+        if existed.blockReason:
+            raise HTTPException(400, f"Your account was blocked. Reason: {existed.blockReason}")
+        
         return LoginResponse(id=existed.id, role=existed.role)
     
     async def CalculatePasswordHash(self, password: str) -> str:
         return password # Типо хеширую пароль
+    
+    async def Block(self, iniciatorId: uuid, request: BlockRequest) -> None:
+        iniciator = await self.accountsRepo.GetById(iniciatorId)
+        if not iniciator:
+            raise HTTPException(403)
+        if iniciator.role != AccountRoleModel.Admin:
+            raise HTTPException(401)
+        
+        target = await self.accountsRepo.SearchOne(login=request.targetLogin)
+        if not target:
+            raise HTTPException(404, f"Account with id: ${request.targetLogin} does not exists")
+        
+        await self.accountsRepo.UpdateField(target.id, "blockReason", request.blockReason)
