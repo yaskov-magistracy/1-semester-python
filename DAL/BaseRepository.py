@@ -52,10 +52,11 @@ class BaseRepository(ABC, Generic[T]):
             update(self.model)
             .where(self.model.id == id)
             .values(**data))
-        updated = await self.getById(id)
+        updated = await self.GetById(id)
         if (updated == None):
             raise Exception("Where is no entity with same Id")
         
+        await self.session.commit()
         return updated
 
     async def UpdateField(self, id: UUID, column: str, value: Any) -> T:
@@ -65,7 +66,8 @@ class BaseRepository(ABC, Generic[T]):
             .values(**{column: value})
         )
 
-        return await self.get_by_id(id)
+        await self.session.commit()
+        return await self.GetById(id)
 
     async def Delete(self, id: UUID) -> None:
         await self.session.execute(

@@ -1,7 +1,7 @@
-from .NotificationModel import NotificationModel
+from .Models import NotificationModel
 from DAL.BaseRepository import BaseRepository
 
-class AccountsRepository(BaseRepository[NotificationModel]):
+class NotificationsRepository(BaseRepository[NotificationModel]):
     @property
     def model(self) -> type[NotificationModel]:
         return NotificationModel
