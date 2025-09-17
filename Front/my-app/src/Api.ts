@@ -41,8 +41,12 @@ export type Notification = {
 export const api = {
     accounts: {
         register: async (request: RegisterRequest): Promise<AxiosResponse<LoginResponse>> => {
-            const response = await axios.post<LoginResponse>('/accounts/register', request)
-            return response
+            try{
+                const response = await axios.post<LoginResponse>('/accounts/register', request)
+                return response
+            } catch(e: any) {
+                return e.response
+            }
         },
         login: async (request: LoginRequest): Promise<AxiosResponse<LoginResponse>> => {
             const response = await axios.post<LoginResponse>('/accounts/login', request)
