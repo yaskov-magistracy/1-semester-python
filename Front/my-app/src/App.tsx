@@ -2,49 +2,63 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { AccountRole, api, Notification } from './Api';
+import UserPage from './User';
+import AdminPage from './Admin';
 
-type AccountState = {
+export type AccountState = {
   id: string,
   role: AccountRole
 }
 
-type State = {
-  account?: AccountState
-  notifications: Notification[]
-}
-
-const defaultState: State = {
-  account: undefined,
-  notifications: []
-}
-
 const App = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [account, setAccount] = useState<AccountState | null>(null);
-  const [notification, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {(async () => {
     const myResponse = await api.accounts.my();
-    
+    setAccount({
+      id: myResponse.data.id,
+      role: myResponse.data.role
+    });
+    setIsLoading(false);
   })()}, [])
 
+  if (isLoading)
+    return <Loading />;
+
+  if (account === null)
+    return <LoginPage />
+  if (account?.role === AccountRole.User)
+    return <UserPage account={account}/>
+  if (account?.role === AccountRole.Admin)
+    return <AdminPage account={account}/>
+
+  {throw new Error("This is unprocessable state")}
+}
+
+const Loading = () => {
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Loading...
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
-  );
+  )
+}
+
+type LoginPageProps = {
+    
+}
+
+const LoginPage = (props: LoginPageProps) => {
+    return (
+        <>
+          
+        </>
+    );
 }
 
 export default App;
