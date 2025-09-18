@@ -1,9 +1,11 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { AccountRole, api, Notification } from './Api';
 import UserPage from './User';
 import AdminPage from './Admin';
+
 
 export type AccountState = {
   id: string,
@@ -40,7 +42,6 @@ const Loading = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
           Loading...
         </p>

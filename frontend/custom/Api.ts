@@ -1,6 +1,12 @@
 import axios, { AxiosResponse } from "axios";
 
 
+export const baseApi = axios.create({
+    baseURL: 'api/v1',
+    url: 'api/v1',
+    withCredentials: true
+})
+
 export type RegisterRequest = {
     login: string,
     email: string,
@@ -47,32 +53,32 @@ export const api = {
     accounts: {
         register: async (request: RegisterRequest): Promise<AxiosResponse<LoginResponse>> => {
             try{
-                const response = await axios.post<LoginResponse>('/accounts/register', request)
+                const response = await baseApi.post<LoginResponse>('/accounts/register', request)
                 return response
             } catch(e: any) {
                 return e.response
             }
         },
         login: async (request: LoginRequest): Promise<AxiosResponse<LoginResponse>> => {
-            const response = await axios.post<LoginResponse>('/accounts/login', request)
+            const response = await baseApi.post<LoginResponse>('/accounts/login', request)
             return response
         },
         my: async (): Promise<AxiosResponse<LoginResponse>> => {
-            const response = await axios.post<LoginResponse>('/accounts/my')
+            const response = await baseApi.post<LoginResponse>('/accounts/my')
             return response
         },
         logout: async (): Promise<AxiosResponse> => {
-            const response = await axios.post('/accounts/logout')
+            const response = await baseApi.post('/accounts/logout')
             return response
         },
         blockUser: async (request: BlockRequest): Promise<AxiosResponse> => {
-            const response = await axios.post(`/accounts/block`, request)
+            const response = await baseApi.post(`/accounts/block`, request)
             return response
         }
     },
     notifications: {
         add: async (request: AddNotificationRequest): Promise<AxiosResponse<Notification>> => {
-            const response = await axios.post<Notification>('/notifications', request)
+            const response = await baseApi.post<Notification>('/notifications', request)
             return response
         },
         getMy: async (): Promise<AxiosResponse<Notification[]>> => {
@@ -82,11 +88,11 @@ export const api = {
 
         },
         repeat: async (notificationId: string, request: RepeatNotificationRequest): Promise<AxiosResponse<Notification>> => {
-            const response = await axios.post<Notification>(`/notifications/${notificationId}/repeat`, request)
+            const response = await baseApi.post<Notification>(`/notifications/${notificationId}/repeat`, request)
             return response
         },
         remove: async (notificationId: string): Promise<AxiosResponse> => {
-            const response = await axios.delete(`/notifications/${notificationId}`)
+            const response = await baseApi.delete(`/notifications/${notificationId}`)
             return response
         }
     }
