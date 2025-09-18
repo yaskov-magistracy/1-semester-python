@@ -22,6 +22,11 @@ export type LoginResponse = {
     role: AccountRole
 }
 
+export type BlockRequest = {
+    targetId: string,
+    blockReason: string
+}
+
 export type AddNotificationRequest = {
     time: Date,
     text: string
@@ -60,8 +65,8 @@ export const api = {
             const response = await axios.post('/accounts/logout')
             return response
         },
-        blockUser: async (accountId: string): Promise<AxiosResponse> => {
-            const response = await axios.post(`/accounts/${accountId}/block`, )
+        blockUser: async (request: BlockRequest): Promise<AxiosResponse> => {
+            const response = await axios.post(`/accounts/block`, request)
             return response
         }
     },
@@ -69,6 +74,12 @@ export const api = {
         add: async (request: AddNotificationRequest): Promise<AxiosResponse<Notification>> => {
             const response = await axios.post<Notification>('/notifications', request)
             return response
+        },
+        getMy: async (): Promise<AxiosResponse<Notification[]>> => {
+
+        },
+        getAll: async (): Promise<AxiosResponse<Notification[]>> => {
+
         },
         repeat: async (notificationId: string, request: RepeatNotificationRequest): Promise<AxiosResponse<Notification>> => {
             const response = await axios.post<Notification>(`/notifications/${notificationId}/repeat`, request)
