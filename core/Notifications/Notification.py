@@ -1,12 +1,7 @@
-import uuid
-from datetime import datetime, timezone
+from pydantic import BaseModel, UUID4
+from datetime import datetime
 
-class Notification():
-    id: uuid
+class Notification(BaseModel):
+    id: UUID4
     time: datetime
     text: str
-
-    def __init__(self, id, time, text):
-        self.id = id,
-        self.time = time
-        self.login = text

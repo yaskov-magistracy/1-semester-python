@@ -33,7 +33,7 @@ class AccountModel(BaseModel):
 
 class NotificationModel(BaseModel):
     __tablename__ = "notifications"
-    time: Mapped[datetime] = mapped_column(DateTime(timezone=False))
+    time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     text: Mapped[str] = mapped_column(String(1000), nullable=False)
     accountId: Mapped[UUID] = mapped_column(ForeignKey("accounts.id"))
 
