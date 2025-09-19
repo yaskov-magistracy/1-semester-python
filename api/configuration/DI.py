@@ -6,6 +6,7 @@ from DAL.AccountsRepository import AccountsRepository
 from core.Accounts.AccountsService import AccountsService
 from DAL.NotificationsRepository import NotificationsRepository
 from core.Notifications.NotificationsService import NotificationsService
+from core.Notifications.EmailSender import EmailSender
 
 async def getDbSession() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_factory() as session:
@@ -19,6 +20,10 @@ AccountsRepositoryDep = Annotated[AccountsRepository, Depends(getAccountsReposit
 async def getAccountsService(accountsRepo: AccountsRepositoryDep) -> AccountsService:
     return AccountsService(accountsRepo)
 AccountsServiceDep = Annotated[AccountsService, Depends(getAccountsService)]
+
+async def getEmailSender() -> EmailSender:
+    return EmailSender()
+EmailSenderDep = Annotated[EmailSender, Depends(getEmailSender)]
 
 async def getNotificationsRepository(session: DbSessionDep) -> NotificationsRepository:
     return NotificationsRepository(session)
