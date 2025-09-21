@@ -1,12 +1,11 @@
-import React from "react";
+import React, {ReactNode} from "react";
 import { Notification } from "./Api";
 
 type Props = {
     Notifications: Notification[],
     Title: string,
     ActionColumnTitle: string,
-    ActionColumnText: string,
-    ActionColumnCallback: (notification: Notification) => void,
+    ActionColumn?: (notification: Notification) => ReactNode
 }
 
 const NotificationsTable = (props: Props) => {
@@ -16,26 +15,25 @@ const NotificationsTable = (props: Props) => {
       <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
         <thead>
           <tr style={{ backgroundColor: '#f5f5f5' }}>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>ИД</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>Время</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>Текст</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>{props.ActionColumnTitle}</th>
+            <th style={{ border: '1px solid #ccc', padding: '8px', width: '10%' }}>ИД</th>
+            <th style={{ border: '1px solid #ccc', padding: '8px', width: '20%' }}>Время</th>
+            <th style={{ border: '1px solid #ccc', padding: '8px', width: '' }}>Текст</th>
+            {!!props.ActionColumn
+              && <th style={{ border: '1px solid #ccc', padding: '8px', width: '40%' }}>{props.ActionColumnTitle}</th>}
           </tr>
         </thead>
         <tbody>
           {props.Notifications.map((e) => (
             <tr key={e.id}>
               <td style={{ border: '1px solid #ccc', padding: '8px' }}>{e.id}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{e.time.toString()}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{e.text}</td>
               <td style={{ border: '1px solid #ccc', padding: '8px' }}>
-                  <button 
-                    onClick={() => props.ActionColumnCallback(e)}
-                    style={{ padding: '5px 10px', margin: '0 5px' }}
-                  >
-                    {props.ActionColumnText}
-                  </button>
+                {e.time.toLocaleString()}{" "}
+                ({e.time.toUTCString().substring(e.time.toUTCString().length - 12)})
               </td>
+              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{e.text}</td>
+              {!!props.ActionColumn && <td style={{ border: '1px solid #ccc', padding: '8px' }}>
+                {props.ActionColumn(e)}
+              </td>}
             </tr>
           ))}
         </tbody>

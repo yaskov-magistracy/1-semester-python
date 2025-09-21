@@ -10,7 +10,8 @@ export const baseApi = axios.create({
 export type RegisterRequest = {
     login: string,
     email: string,
-    password: string
+    password: string,
+    role?: AccountRole,
 }
 
 export type LoginRequest = {
@@ -39,8 +40,8 @@ export type AddNotificationRequest = {
 }
 
 export type RepeatNotificationRequest = {
-    deltaTime?: Date
-    newTime?: Date
+    targetId: string
+    newTime: Date
 }
 
 export type Notification = {
@@ -49,23 +50,60 @@ export type Notification = {
     text: string
 }
 
+export type ApiResponse<T> = {
+    data: T | null,
+    status: number,
+    message?: string
+}
+
+const getErr = (e: any) => ({
+    data: null,
+    status: e.response.status,
+    message: e.response.data.detail[0].msg
+      ?? e.response.data.detail
+})
+
+const getNotification = (e: Notification): Notification => ({
+    id: e.id,
+    time: new Date(e.time),
+    text: e.text,
+})
+
 export const api = {
     accounts: {
-        register: async (request: RegisterRequest): Promise<AxiosResponse<LoginResponse>> => {
-            try{
+        register: async (request: RegisterRequest): Promise<ApiResponse<LoginResponse>> => {
+            try {
+                request.role = AccountRole.User;
                 const response = await baseApi.post<LoginResponse>('/accounts/register', request)
-                return response
-            } catch(e: any) {
-                return e.response
+                return {
+                    data: response.data,
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
             }
         },
-        login: async (request: LoginRequest): Promise<AxiosResponse<LoginResponse>> => {
-            const response = await baseApi.post<LoginResponse>('/accounts/login', request)
-            return response
+        login: async (request: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
+            try {
+                const response = await baseApi.post<LoginResponse>('/accounts/login', request)
+                return {
+                    data: response.data,
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
+            }
         },
-        my: async (): Promise<AxiosResponse<LoginResponse>> => {
-            const response = await baseApi.post<LoginResponse>('/accounts/my')
-            return response
+        my: async (): Promise<ApiResponse<LoginResponse>> => {
+            try {
+                const response = await baseApi.post<LoginResponse>('/accounts/my')
+                return {
+                    data: response.data,
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
+            }
         },
         logout: async (): Promise<AxiosResponse> => {
             const response = await baseApi.post('/accounts/logout')
@@ -77,23 +115,39 @@ export const api = {
         }
     },
     notifications: {
-        add: async (request: AddNotificationRequest): Promise<AxiosResponse<Notification>> => {
-            const response = await baseApi.post<Notification>('/notifications', request)
-            return response
+        add: async (request: AddNotificationRequest): Promise<ApiResponse<Notification>> => {
+            try {
+                const response = await baseApi.post<Notification>('/notifications', request)
+                return {
+                    data: getNotification(response.data),
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
+            }
         },
-        getMy: async (): Promise<AxiosResponse<Notification[]>> => {
-
+        getMy: async (): Promise<ApiResponse<Notification[]>> => {
+            try {
+                const response = await baseApi.get<Notification[]>('/notifications/my')
+                debugger;
+                return {
+                    data: response.data.map(getNotification),
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
+            }
         },
-        getAll: async (): Promise<AxiosResponse<Notification[]>> => {
-
+        repeat: async (request: RepeatNotificationRequest): Promise<ApiResponse<Notification>> => {
+            try {
+                const response = await baseApi.post<Notification>('/notifications/repeat', request)
+                return {
+                    data: getNotification(response.data),
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
+            }
         },
-        repeat: async (notificationId: string, request: RepeatNotificationRequest): Promise<AxiosResponse<Notification>> => {
-            const response = await baseApi.post<Notification>(`/notifications/${notificationId}/repeat`, request)
-            return response
-        },
-        remove: async (notificationId: string): Promise<AxiosResponse> => {
-            const response = await baseApi.delete(`/notifications/${notificationId}`)
-            return response
-        }
     }
 }

@@ -1,5 +1,7 @@
 import React from 'react';
 import { AccountState } from "./App";
+import NotificationsTable from "@/custom/NotificationsTable";
+import Notifications from "@/custom/Notifications";
 
 
 type Props = {
@@ -7,11 +9,11 @@ type Props = {
 }
 
 const UserPage = (props: Props) => {
-    return (
-        <>
-            Вы User
-        </>
-    );
+  return (
+    <>
+      <Notifications {...props} />
+    </>
+  );
 }
 
 export default UserPage
