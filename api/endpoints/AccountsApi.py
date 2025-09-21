@@ -5,9 +5,10 @@ from core.Accounts.DTO.BlockRequest import BlockRequest
 from core.Accounts.DTO.RegisterRequest import RegisterRequest
 from core.Accounts.DTO.LoginRequest import LoginRequest
 from core.Accounts.DTO.LoginResponse import LoginResponse
+from core.Accounts.DTO.AccountResponse import AccountResponse
 from typing import Annotated
 from uuid import uuid4
-from api.configuration.Auth import AUTH_TOKEN_KEY, SetCookie, AuthInfo
+from api.configuration.Auth import AUTH_TOKEN_KEY, SetCookie, AuthInfo, AdminAuthInfo
 import uuid
 
 accountsApiRouter = APIRouter(
@@ -15,6 +16,13 @@ accountsApiRouter = APIRouter(
     tags=["Accounts"],
 )
 
+@accountsApiRouter.get("")
+async def GetAll(
+    accountsService: AccountsServiceDep,
+    adminAuth: AdminAuthInfo
+    ) -> list[AccountResponse]:
+    loginResponse = await accountsService.GetAll(adminAuth.id)
+    return loginResponse
 
 @accountsApiRouter.post("/register")
 async def Register(

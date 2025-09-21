@@ -2,6 +2,7 @@ from core.Accounts.DTO.BlockRequest import BlockRequest
 from .DTO.RegisterRequest import *
 from .DTO.LoginRequest import *
 from .DTO.LoginResponse import *
+from .DTO.AccountResponse import *
 from DAL.AccountsRepository import AccountsRepository
 from DAL.Models import AccountModel
 from uuid import uuid4
@@ -13,6 +14,10 @@ class AccountsService():
 
     def __init__(self, accountsRepo: AccountsRepository):
         self.accountsRepo = accountsRepo
+
+    async def GetAll(self, iniciatorId: uuid) -> list[AccountResponse]:
+        accounts = await self.accountsRepo.SearchAll()
+        return map(self.ToApiModel, accounts)
 
     async def Register(self, request: RegisterRequest) -> LoginResponse:
         existed = await self.accountsRepo.SearchOne(login = request.login) 
@@ -59,3 +64,6 @@ class AccountsService():
             raise HTTPException(404, f"Account with id: ${request.targetLogin} does not exists")
         
         await self.accountsRepo.UpdateField(target.id, "blockReason", request.blockReason)
+
+    def ToApiModel(self, account: AccountModel) -> AccountResponse:
+        return AccountResponse(id=account.id, login=account.login, role=account.role, blockReason=account.blockReason)
