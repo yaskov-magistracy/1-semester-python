@@ -12,7 +12,7 @@ from api.configuration.Auth import AUTH_TOKEN_KEY, SetCookie, AuthInfo, AdminAut
 import uuid
 
 accountsApiRouter = APIRouter(
-    prefix="/acccounts",
+    prefix="/accounts",
     tags=["Accounts"],
 )
 
@@ -49,9 +49,10 @@ async def My(authInfo: AuthInfo) -> LoginResponse:
     return authInfo
 
 @accountsApiRouter.post("/logout")
-async def Logout(request: Request) -> None:
-    request.cookies.pop(AUTH_TOKEN_KEY, "")    
-    return Response(status_code=204)
+async def Logout(request: Request, response: Response) -> None:
+    response.delete_cookie(AUTH_TOKEN_KEY, secure=True, httponly=True)
+    response.status_code = 204
+    return response
 
 @accountsApiRouter.post("/block")
 async def Block(
