@@ -1,0 +1,61 @@
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: "Eduteka"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+    ports:
+      - "5432:5432"
+    volumes:
+      - eduteka_postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my-network
+
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    environment:
+      - REDIS_PASSWORD=password
+      - REDIS_USER=redis
+      - REDIS_USER_PASSWORD=password
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    networks:
+      - my-network
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - app
+    networks:
+      - my-network
+
+volumes:
+  redis_data:
+  eduteka_postgres_data:
+  backend_static_files:
+
+networks:
+  my-network:
+    driver: bridge

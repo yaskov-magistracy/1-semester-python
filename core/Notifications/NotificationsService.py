@@ -6,12 +6,15 @@ import uuid
 from typing import List
 from fastapi import HTTPException
 from .Notification import Notification
+from core.Notifications.EmailSender import EmailSender
 
 class NotificationsService():
     notificationsRepo: NotificationsRepository
+    emailSender: EmailSender
 
-    def __init__(self, notificationsRepo: NotificationsRepository):
+    def __init__(self, notificationsRepo: NotificationsRepository, emailSender: EmailSender):
         self.notificationsRepo = notificationsRepo
+        self.emailSender = emailSender
     
     async def Add(
         self,

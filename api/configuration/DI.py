@@ -29,6 +29,6 @@ async def getNotificationsRepository(session: DbSessionDep) -> NotificationsRepo
     return NotificationsRepository(session)
 NotificationsRepositoryDep = Annotated[NotificationsRepository, Depends(getNotificationsRepository)]
 
-async def getNotificationsService(notificationsRepo: NotificationsRepositoryDep) -> NotificationsService:
-    return NotificationsService(notificationsRepo)
+async def getNotificationsService(notificationsRepo: NotificationsRepositoryDep, emailSender: EmailSenderDep) -> NotificationsService:
+    return NotificationsService(notificationsRepo, emailSender)
 NotificationsServiceDep = Annotated[NotificationsService, Depends(getNotificationsService)]
