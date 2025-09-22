@@ -4,6 +4,7 @@
 # Стек
 Front:
 - Next.js
+
 Back:
 - python
 - fastapi
@@ -11,6 +12,7 @@ Back:
 - Alembic (Migrations)
 - Pydantic (Data validation)
 - dramatiq(почти)
+
 Database:
 - PostgreSQL
 
