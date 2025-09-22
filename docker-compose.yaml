@@ -16,22 +16,10 @@ services:
   redis:
     image: redis:latest
     container_name: redis_container
-    environment:
-      - REDIS_PASSWORD=password
-      - REDIS_USER=redis
-      - REDIS_USER_PASSWORD=password
     ports:
-      - "6380:6379"
+      - "6379:6379"
     volumes:
       - ./redis_data:/data
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 256M
     restart: unless-stopped
     tty: true
     stdin_open: true

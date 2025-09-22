@@ -7,21 +7,26 @@ from typing import List
 from fastapi import HTTPException
 from .Notification import Notification
 from core.Notifications.EmailSender import EmailSender
+from DAL.AccountsRepository import AccountsRepository
 
 class NotificationsService():
     notificationsRepo: NotificationsRepository
     emailSender: EmailSender
+    accountsRepo: AccountsRepository
 
-    def __init__(self, notificationsRepo: NotificationsRepository, emailSender: EmailSender):
+    def __init__(self, notificationsRepo: NotificationsRepository, emailSender: EmailSender, accountsRepo: AccountsRepository):
         self.notificationsRepo = notificationsRepo
         self.emailSender = emailSender
+        self.accountsRepo = accountsRepo
     
     async def Add(
         self,
-        accountdId: uuid,
+        accountId: uuid,
         request: AddNotificationRequest
         ) -> Notification:
-        notification = await self.notificationsRepo.Add(NotificationModel(accountId=accountdId, time=request.time, text=request.text))
+        notification = await self.notificationsRepo.Add(NotificationModel(accountId=accountId, time=request.time, text=request.text))
+        account = await self.accountsRepo.GetById(accountId)
+        await self.emailSender.SendEmail(account.email, request.text, request.time)
         return self.ToApiModel(notification)
 
     async def Repeat(

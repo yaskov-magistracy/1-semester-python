@@ -5,6 +5,7 @@ import dramatiq
 from dramatiq.brokers.redis import RedisBroker 
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
+from dramatiq.brokers.stub import StubBroker
 
 app = FastAPI()
 app.include_router(apiRouters)
@@ -17,11 +18,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-dramatiq.set_broker(RedisBroker(
-    host=settings.REDIS_HOST(), 
-    port=settings.REDIS_PORT(), 
-    db=0, 
-    password=settings.REDIS_PASSWORD()))
+
+broker = StubBroker()
+redisBroker = RedisBroker(host="localhost", port=6379)
+
+dramatiq.set_broker(broker)
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
+
