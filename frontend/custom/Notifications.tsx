@@ -5,7 +5,8 @@ import {api, Notification as Notification} from "@/custom/Api";
 import notificationsTable from "@/custom/NotificationsTable";
 
 type Props = {
-  account: AccountState
+  account: AccountState,
+  isAdmin?: boolean
 }
 
 const Notifications = (props: Props) => {
@@ -21,7 +22,9 @@ const Notifications = (props: Props) => {
       : 1;
 
   useEffect(() => {(async () => {
-    const myResponse = await api.notifications.getMy();
+    const myResponse = props.isAdmin
+      ? await api.notifications.getAll()
+      : await api.notifications.getMy();
     if (!!myResponse.message)
     {
       setError(myResponse.message);
@@ -45,14 +48,16 @@ const Notifications = (props: Props) => {
         Title={"Уведомления"}
         ActionColumnTitle={""}
       />
-      <AddEl reloadCallback={reload}/>
+      {!props.isAdmin && <AddEl reloadCallback={reload}/>}
       <NotificationsTable
         Notifications={notifications
           .filter(e => e.time <= curDate)}
         Title={"Архив"}
         ActionColumnTitle={"Повторить. Дата в формате dd.MM.yyyy HH:mm:ss или кнопки снизу"}
-        ActionColumn={(e) =>
-        <RepeatEl notification={e} reloadCallback={reload} />}
+        ActionColumn={
+        props.isAdmin
+          ? null
+          : (e) => <RepeatEl notification={e} reloadCallback={reload} />}
       />
     </div>
   );

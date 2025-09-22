@@ -30,7 +30,9 @@ services:
     image: fnatikjk/python
     container_name: app
     environment:
-      - TEST=123
+      - "DATABASE_CONNECTION_STRING=postgresql+asyncpg://postgres:password@postgres:5432/python"
+      - EMAIL_LOGIN=chernorusy@mail.ru
+      - EMAIL_PASSWORD=1
     ports:
       - 8000:8000
     networks:

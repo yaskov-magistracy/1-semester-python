@@ -12,7 +12,7 @@ const AdminPage = (props: Props) => {
 
   const getContent = () => {
     if (isNotifications)
-      return <Notifications {...props} />
+      return <Notifications {...props} isAdmin={true} />
 
     return <Users />
   }

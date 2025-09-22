@@ -155,6 +155,17 @@ export const api = {
                 return getErr(e)
             }
         },
+        getAll: async (): Promise<ApiResponse<Notification[]>> => {
+            try {
+                const response = await baseApi.get<Notification[]>('/notifications');
+                return {
+                    data: response.data.map(getNotification),
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
+            }
+        },
         repeat: async (request: RepeatNotificationRequest): Promise<ApiResponse<Notification>> => {
             try {
                 const response = await baseApi.post<Notification>('/notifications/repeat', request)
