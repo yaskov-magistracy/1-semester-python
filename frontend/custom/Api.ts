@@ -14,6 +14,13 @@ export type RegisterRequest = {
     role?: AccountRole,
 }
 
+export type AccountResponse ={
+    id: string
+    login: string
+    role: AccountRole
+    blockReason?: string
+}
+
 export type LoginRequest = {
     login: string,
     password: string
@@ -30,7 +37,7 @@ export type LoginResponse = {
 }
 
 export type BlockRequest = {
-    targetId: string,
+    targetLogin: string,
     blockReason: string
 }
 
@@ -71,6 +78,17 @@ const getNotification = (e: Notification): Notification => ({
 
 export const api = {
     accounts: {
+        getAll: async (): Promise<ApiResponse<AccountResponse[]>> => {
+            try {
+                const response = await baseApi.get<AccountResponse[]>('/accounts')
+                return {
+                    data: response.data,
+                    status: response.status,
+                }
+            } catch (e: any) {
+                return getErr(e)
+            }
+        },
         register: async (request: RegisterRequest): Promise<ApiResponse<LoginResponse>> => {
             try {
                 request.role = AccountRole.User;
@@ -129,7 +147,6 @@ export const api = {
         getMy: async (): Promise<ApiResponse<Notification[]>> => {
             try {
                 const response = await baseApi.get<Notification[]>('/notifications/my')
-                debugger;
                 return {
                     data: response.data.map(getNotification),
                     status: response.status,
