@@ -114,7 +114,7 @@ export const api = {
         },
         my: async (): Promise<ApiResponse<LoginResponse>> => {
             try {
-                const response = await baseApi.post<LoginResponse>('/accounts/my')
+                const response = await baseApi.get<LoginResponse>('/accounts/my')
                 return {
                     data: response.data,
                     status: response.status,

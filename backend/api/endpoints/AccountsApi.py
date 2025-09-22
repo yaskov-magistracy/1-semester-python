@@ -44,7 +44,7 @@ async def Login(
     SetCookie(response, loginResponse)
     return loginResponse
 
-@accountsApiRouter.post("/my", summary="Get info about authorized account")
+@accountsApiRouter.get("/my", summary="Get info about authorized account")
 async def My(authInfo: AuthInfo) -> LoginResponse:
     return authInfo
 
