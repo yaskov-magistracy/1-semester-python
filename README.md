@@ -1,5 +1,5 @@
 # Описание
-Проект по получению уведомлений на элемктронную почту
+Проект по получению уведомлений на электронную почту
 
 # Стек
 Front:
@@ -11,7 +11,7 @@ Back:
 - SQLAlchemy (async)
 - Alembic (Migrations)
 - Pydantic (Data validation)
-- dramatiq(почти)
+- dramatiq (почти)
 
 Database:
 - PostgreSQL
