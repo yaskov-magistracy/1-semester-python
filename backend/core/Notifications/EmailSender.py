@@ -11,11 +11,15 @@ class EmailSender():
     async def SendEmail(self, targetMail: str, text: str, targetDateTime: datetime):
         currentTime = datetime.datetime.now(datetime.timezone.utc)
         delay = int((targetDateTime - currentTime).total_seconds() * 1000)
+        print (delay)
         if (delay < 0):
-            raise HTTPException("Время только в будущем")
+            raise HTTPException(400, "Время только в будущем")
         
-        self.SendWithoutDramatiq(targetMail, text)
-        SendMailTask.send_with_options(args=(targetMail, text), delay=delay)
+        try:
+            self.SendWithoutDramatiq(targetMail, text)
+        except Exception as e:
+            raise HTTPException(e)
+        #SendMailTask.send_with_options(args=(targetMail, text), delay=delay)
         #send_with_options(args=(targetMail, text), delay=delay)
 
     def SendWithoutDramatiq(self, targetMail: str, text: str):

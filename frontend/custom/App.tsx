@@ -10,7 +10,8 @@ import AuthPage from './Auth';
 
 export type AccountState = {
   id: string,
-  role: AccountRole
+  role: AccountRole,
+  email: string,
 }
 
 const App = () => {
@@ -39,7 +40,8 @@ const App = () => {
 
     setAccount({
       id: myResponse.data.id,
-      role: myResponse.data.role
+      role: myResponse.data.role,
+      email: myResponse.data.email,
     });
     setIsLoading(false);
   })()}, [needReload])
@@ -54,6 +56,7 @@ const App = () => {
     return (
       <div>
         <div>
+          <p>Email: {account.email}</p>
           Вы {account?.role === AccountRole.User ? "User" : "Admin"} -
           <button
             style={{backgroundColor: "red"}}

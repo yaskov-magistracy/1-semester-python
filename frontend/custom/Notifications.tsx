@@ -56,7 +56,7 @@ const Notifications = (props: Props) => {
         ActionColumnTitle={"Повторить. Дата в формате dd.MM.yyyy HH:mm:ss или кнопки снизу"}
         ActionColumn={
         props.isAdmin
-          ? null
+          ? undefined
           : (e) => <RepeatEl notification={e} reloadCallback={reload} />}
       />
     </div>

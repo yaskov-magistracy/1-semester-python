@@ -32,7 +32,7 @@ class AccountsService():
             email=request.email, 
             passwordHash=await self.CalculatePasswordHash(request.password),
             role=request.role))
-        return LoginResponse(id=created.id, role=created.role)
+        return LoginResponse(id=created.id, role=created.role, email=created.email)
     
     async def Login(self, request: LoginRequest) -> LoginResponse:
         existed = await self.accountsRepo.SearchOne(login=request.login)
@@ -47,7 +47,7 @@ class AccountsService():
         if existed.blockReason:
             raise HTTPException(400, f"Your account was blocked. Reason: {existed.blockReason}")
         
-        return LoginResponse(id=existed.id, role=existed.role)
+        return LoginResponse(id=existed.id, role=existed.role, email=existed.email)
     
     async def CalculatePasswordHash(self, password: str) -> str:
         return password # Типо хеширую пароль
@@ -66,4 +66,4 @@ class AccountsService():
         await self.accountsRepo.UpdateField(target.id, "blockReason", request.blockReason)
 
     def ToApiModel(self, account: AccountModel) -> AccountResponse:
-        return AccountResponse(id=account.id, login=account.login, role=account.role, blockReason=account.blockReason)
+        return AccountResponse(id=account.id, login=account.login, email=account.email, role=account.role, blockReason=account.blockReason)

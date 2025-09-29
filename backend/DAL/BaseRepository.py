@@ -17,7 +17,7 @@ class BaseRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     async def Add(self, data: T) -> T:
-        instance = data#self.model(data)
+        instance = data
         self.session.add(instance)
         await self.session.flush()
         await self.session.commit()

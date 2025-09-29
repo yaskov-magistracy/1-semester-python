@@ -33,7 +33,8 @@ export enum AccountRole{
 
 export type LoginResponse = {
     id: string,
-    role: AccountRole
+    role: AccountRole,
+    email: string,
 }
 
 export type BlockRequest = {

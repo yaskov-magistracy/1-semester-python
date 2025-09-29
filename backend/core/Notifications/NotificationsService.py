@@ -24,6 +24,7 @@ class NotificationsService():
         accountId: uuid,
         request: AddNotificationRequest
         ) -> Notification:
+        print(request)
         notification = await self.notificationsRepo.Add(NotificationModel(accountId=accountId, time=request.time, text=request.text))
         account = await self.accountsRepo.GetById(accountId)
         await self.emailSender.SendEmail(account.email, request.text, request.time)
@@ -34,7 +35,9 @@ class NotificationsService():
         request: RepeatNotificationRequest
         ) -> Notification:
         notification = await self.notificationsRepo.GetById(request.targetId)
+        account = await self.accountsRepo.GetById(notification.accountId)
         newNotification = NotificationModel(accountId=notification.accountId, text=notification.text, time=request.newTime)
+        await self.emailSender.SendEmail(account.email, newNotification.text, newNotification.time)
         newNotification = await self.notificationsRepo.Add(newNotification)
         return self.ToApiModel(newNotification)
 
